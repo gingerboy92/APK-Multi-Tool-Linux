@@ -33,11 +33,8 @@ ex () {
 
 opt () {
 	cd other
-	find "../out/res" -name *.png | while read PNG_FILE ;
 	do
-		if [ `echo "$PNG_FILE" | grep -c "\.9\.png$"` -eq 0 ] ; then
-			optipng -o99 "$PNG_FILE"
-		fi
+		 schedtool -n 19 -B -e $(find "../out/res" \( -name "*.png" ! -name "*.9.png" \)|xargs -n 1 -P 4 optipng -o99)
 	done
 	cd ..
 }
@@ -164,12 +161,9 @@ bopt () {
 		# Extract
 		7za x -o"../place-apk-here-to-batch-optimize/original" "../place-apk-here-to-batch-optimize/$APK_FILE"
 		# PNG
-		find "../place-apk-here-to-batch-optimize/original" -name *.png | while read PNG_FILE ;
-		do
-			if [ `echo "$PNG_FILE" | grep -c "\.9\.png$"` -eq 0 ] ; then
-				optipng -o99 "$PNG_FILE"
-			fi
-		done
+		
+		schedtool -n 19 -B -e $(find "../place-apk-here-to-batch-optimize/original" \( -name "*.png" ! -name "*.9.png" \)|xargs -n 1 -P 4 optipng -o99)
+		
 		# TODO optimize .ogg files
 		# Re-compress
 		7za a -tzip "../place-apk-here-to-batch-optimize/temp.zip" ../place-apk-here-to-batch-optimize/original/* -mx9
@@ -267,7 +261,7 @@ restart () {
 # Start
 PATH="$PATH:$PWD/other"
 export PATH
-#echo $PATH
+echo $PATH
 # Test for needed programs and warn if missing
 ERROR="0"
 for PROGRAM in "optipng" "7za" "java" "sudo" "adb" "aapt" "sox"
